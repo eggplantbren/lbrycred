@@ -92,12 +92,13 @@ f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
     &= -\frac{1}{2}\sum_{i=1}^n\left(y_i - \Phi(\eta_j)\right)^2 \\
     &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right).
 \end{align}
-Now take the partial derivative with respect to $y_k$:
-\begin{align}
-\frac{\partial f}{\partial y_k}
-    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right)
-\end{align}
-
+%Now take the partial derivative with respect to $y_k$:
+%\begin{align}
+%\frac{\partial f}{\partial y_k}
+%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right)
+%\end{align}
+A guessed iterative procedure to solve for the $y$s is to set each one to
+$\Phi(\eta)$ in turn. See {\tt simulate.py} in this repo.
 
 
 \bibliographystyle{plainnat}
