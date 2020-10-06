@@ -62,12 +62,27 @@ f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n
                             \left(y_j - \ell_j\right)^2.
 \end{align}
 This just moves the peak so the maximum is trivially found at
-$y_j = \ell_j$.
+$y_j = \ell_j$. Bear in mind that the credibility score here is in LBC
+units, which might not be desirable.
 
+\section{Taking Supporter Credibility Into Account}
 Now let's try replacing $\ell_j$ with an alternative that accounts for the
 credibilities of the supporting channels. We'll need to treat the diagonal
 value $w_{jj}$ differently because self and anonymous supports don't get
-modified due to credibility.
+modified due to credibility. I will also re-grade the credibility scores
+to be of order unity (but $\geq 1$), so they can be used as LBC multipliers.
+Let $\eta_j$ be the `effective' staked value on a channel, modified to account
+for the credibility of the supporters:
+\begin{align}
+\eta_j &= w_{jj} + \sum_{i \neq j} y_i w_{ij},
+\end{align}
+and let the objective function be
+\begin{align}
+f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n y_i^2
+                     - ...
+\end{align}
+where $\Phi()$ is a monotonic function mapping LBC units to something of order
+unity.
 
 
 \bibliographystyle{plainnat}
