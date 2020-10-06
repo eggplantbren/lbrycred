@@ -8,6 +8,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
 \usepackage{natbib}
+\newcommand{\lbc}{\ell}
+
 
 \title{lbrycred}
 \author{Brendon J. Brewer}
@@ -47,9 +49,8 @@ Here I will try to rewrite the rule `credibility $\equiv$~total staked LBC'
 as the solution to an optimisation problem, so I can see how to generalise it.
 The total staked amount on channel $j$ is the row sum
 \begin{align}
-(\textnormal{LBC})_j = \sum_{i=1}^n w_{ij}.
+\ell_j = \sum_{i=1}^n w_{ij}.
 \end{align}
-
 Define the objective function $f(\boldsymbol{y})$ as
 \begin{align}
 f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n y_j^2.
@@ -58,10 +59,15 @@ That's maximised by setting all elements of $\boldsymbol{y}$ to zero.
 Now add another term:
 \begin{align}
 f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n
-                            \left(y_j - (\textnormal{LBC})_j\right)^2.
+                            \left(y_j - \ell_j\right)^2.
 \end{align}
 This just moves the peak so the maximum is trivially found at
-$y_j = (\textnormal{LBC})_j$.
+$y_j = \ell_j$.
+
+Now let's try replacing $\ell_j$ with an alternative that accounts for the
+credibilities of the supporting channels. We'll need to treat the diagonal
+value $w_{jj}$ differently because self and anonymous supports don't get
+modified due to credibility.
 
 
 \bibliographystyle{plainnat}
