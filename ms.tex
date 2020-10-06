@@ -78,12 +78,13 @@ for the credibility of the supporters:
 \end{align}
 and let the objective function be
 \begin{align}
-f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n y_i^2
-                     - ...
+f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
+                            y_i - \Phi\left(w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
+                        \right]^2
 \end{align}
 where $\Phi()$ is a monotonic function mapping LBC units to something of order
-unity.
-
+unity, and also satisfies $\Phi(0) = 1$. Let's try
+$\Phi(x) = \log_{10}(x + 10)$ and see what happens.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
