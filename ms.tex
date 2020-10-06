@@ -4,6 +4,7 @@
 \usepackage{dsfont}
 \usepackage[left=2cm, right=2cm, bottom=3cm, top=2cm]{geometry}
 \usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
 \usepackage{natbib}
@@ -29,7 +30,11 @@ elements $w_{ii}$ include the bid, self supports, and anonymous supports.
 In practice the $\boldsymbol{w}$ will be sparse and concentrated along the
 diagonal.
 
-
+We need to compute the $\boldsymbol{y}$ values from the $\boldsymbol{w}$,
+and Jeremy proposed an iterative procedure which reminds me of the
+\href{https://en.wikipedia.org/wiki/Jacobi_method}{Jacobi Method}. However,
+I tried it out and it diverged --- presumably the matrix $\boldsymbol{w}$ had
+eigenvalues above 1.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
