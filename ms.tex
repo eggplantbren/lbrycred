@@ -23,7 +23,7 @@
 \setlength{\parskip}{8pt}
 
 Let $\boldsymbol{y} = \{y_1, y_2, ..., y_n\}$ be the vector of credibility
-scores and $\boldsymbol{w} = \left\{w_{ij}\right\}$
+scores (where $y_i \geq 0$) and $\boldsymbol{w} = \left\{w_{ij}\right\}$
 a matrix of signed supports, where
 $w_{ij}$ is the support from channel $i$ to channel $j$. Let the diagonal
 elements $w_{ii}$ include the bid, self supports, and anonymous supports.
@@ -39,11 +39,29 @@ eigenvalues above 1.
 
 One can think of these iterative methods as optimisation techniques; basically
 Gibbs sampling at zero temperature in order to optimise some objective
-function. Since I'm better at optimisation than linear algebra, I will try to work in these terms.
+function. Since I'm better at optimisation than linear algebra, I will try to work in these terms. You can also think about these as numerical PDE solvers
+like in undergrad COSC.
 
 \section{Total Staked Amount}
 Here I will try to rewrite the rule `credibility $\equiv$~total staked LBC'
 as the solution to an optimisation problem, so I can see how to generalise it.
+The total staked amount on channel $j$ is the row sum
+\begin{align}
+(\textnormal{LBC})_j = \sum_{i=1}^n w_{ij}.
+\end{align}
+
+Define the objective function $f(\boldsymbol{y})$ as
+\begin{align}
+f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n y_j^2.
+\end{align}
+That's maximised by setting all elements of $\boldsymbol{y}$ to zero.
+Now add another term:
+\begin{align}
+f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n
+                            \left(y_j - (\textnormal{LBC})_j\right)^2.
+\end{align}
+This just moves the peak so the maximum is trivially found at
+$y_j = (\textnormal{LBC})_j$.
 
 
 \bibliographystyle{plainnat}
