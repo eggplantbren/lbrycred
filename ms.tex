@@ -32,9 +32,19 @@ diagonal.
 
 We need to compute the $\boldsymbol{y}$ values from the $\boldsymbol{w}$,
 and Jeremy proposed an iterative procedure which reminds me of the
-\href{https://en.wikipedia.org/wiki/Jacobi_method}{Jacobi Method}. However,
+\href{https://en.wikipedia.org/wiki/Jacobi_method}{Jacobi Method} or
+Gauss-Seidel. However,
 I tried it out and it diverged --- presumably the matrix $\boldsymbol{w}$ had
 eigenvalues above 1.
+
+One can think of these iterative methods as optimisation techniques; basically
+Gibbs sampling at zero temperature in order to optimise some objective
+function. Since I'm better at optimisation than linear algebra, I will try to work in these terms.
+
+\section{Total Staked Amount}
+Here I will try to rewrite the rule `credibility $\equiv$~total staked LBC'
+as the solution to an optimisation problem, so I can see how to generalise it.
+
 
 \bibliographystyle{plainnat}
 \bibliography{references}
