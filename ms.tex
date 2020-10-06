@@ -1,0 +1,38 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage[left=2cm, right=2cm, bottom=3cm, top=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{natbib}
+
+\title{lbrycred}
+\author{Brendon J. Brewer}
+\date{}
+
+\begin{document}
+\maketitle
+
+%\abstract{\noindent Abstract}
+
+% Need this after the abstract
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt}
+
+Let $\boldsymbol{y} = \{y_1, y_2, ..., y_n\}$ be the vector of credibility
+scores and $\boldsymbol{w} = \left\{w_{ij}\right\}$
+a matrix of signed supports, where
+$w_{ij}$ is the support from channel $i$ to channel $j$. Let the diagonal
+elements $w_{ii}$ include the bid, self supports, and anonymous supports.
+In practice the $\boldsymbol{w}$ will be sparse and concentrated along the
+diagonal.
+
+
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
+
