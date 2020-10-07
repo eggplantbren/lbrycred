@@ -29,7 +29,7 @@ def update(y, w):
 
 # Matrix of supports. Start with diagonal
 w = np.zeros((NUM_CHANNELS, NUM_CHANNELS))
-w += np.diag(np.exp(3.0 + rng.randn(NUM_CHANNELS)))
+w += np.diag(np.exp(1.0 + rng.randn(NUM_CHANNELS)))
 
 # Add a few signed supports (if they land off-diagonal that's what they are)
 for r in range(1 + rng.randint(10)):
@@ -57,5 +57,7 @@ for i in range(10):
 
 print("Scores transformed on to LBC grade:")
 print("-----------------------------------")
-print(PhiInv(y))
+z = PhiInv(y)
+z *= np.sum(w)/np.sum(z)
+print(z)
 
