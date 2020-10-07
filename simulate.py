@@ -12,6 +12,7 @@ def update(y, w):
     One iteration of the procedure to compute the ys
     """
     for j in range(NUM_CHANNELS):
+        # These are the terms that make up eta_j in the document
         terms = y*w[:, j]
         terms[j] = w[j, j]
         y[j] = Phi(np.sum(terms))
