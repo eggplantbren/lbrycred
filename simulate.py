@@ -12,7 +12,7 @@ def update(y, w):
     One iteration of the procedure to compute the ys
     """
     for j in range(NUM_CHANNELS):
-        terms = y*w[j, :]
+        terms = y*w[:, j]
         terms[j] = w[j, j]
         y[j] = Phi(np.sum(terms))
     return y
