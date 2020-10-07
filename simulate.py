@@ -34,8 +34,10 @@ print(w, end="\n\n")
 
 # Credibilities
 y = np.ones(NUM_CHANNELS)
+print("Credibility scores:")
+print("-------------------", end="\n\n")
 print("After 0 iterations:", y)
-for i in range(10):
+for i in range(5):
     y = update(y, w)
     print(f"After {i+1} iterations:", y)
 
