@@ -3,9 +3,18 @@ import numpy.random as rng
 
 NUM_CHANNELS = 4
 
-# Softening function
 def Phi(x):
+    """
+    Softening function
+    """
     return np.log10(x + 10.0)
+
+def PhiInv(x):
+    """
+    Inverse
+    """
+    return 10.0**x - 10.0
+
 
 def update(y, w):
     """
@@ -29,15 +38,24 @@ for r in range(1 + rng.randint(10)):
     w[i, j] += np.exp(3.0*rng.randn())
 
 print("Support matrix:")
-print("---------------", end="\n\n")
+print("---------------")
 print(w, end="\n\n")
+
+print("Raw staked LBC:")
+print("---------------")
+print(np.sum(w, axis=0), end="\n\n")
 
 # Credibilities
 y = np.ones(NUM_CHANNELS)
-print("Credibility scores:")
-print("-------------------", end="\n\n")
-print("After 0 iterations:", y)
-for i in range(5):
+#print("Credibility scores:")
+#print("-------------------", end="\n\n")
+#print("After 0 iterations:", y)
+for i in range(10):
     y = update(y, w)
-    print(f"After {i+1} iterations:", y)
+#    print(f"After {i+1} iterations:", y)
+#print("\n\n")
+
+print("Scores transformed on to LBC grade:")
+print("-----------------------------------")
+print(PhiInv(y))
 
