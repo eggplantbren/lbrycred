@@ -2,6 +2,7 @@ import numpy as np
 import numpy.random as rng
 
 NUM_CHANNELS = 4
+TOL = 1E-6
 
 def Phi(x):
     """
@@ -18,14 +19,17 @@ def PhiInv(x):
 
 def update(y, w):
     """
-    One iteration of the procedure to compute the ys
+    One iteration of the procedure to compute the ys.
+    Returns True if converged.
     """
+    ynew = y.copy()
     for j in range(NUM_CHANNELS):
         # These are the terms that make up eta_j in the document
-        terms = y*w[:, j]
+        terms = ynew*w[:, j]
         terms[j] = w[j, j]
-        y[j] = Phi(np.sum(terms))
-    return y
+        ynew[j] = Phi(np.sum(terms))
+    converged = np.mean(np.abs(ynew - y)) < TOL
+    return ynew, converged
 
 # Matrix of supports. Start with diagonal
 w = np.zeros((NUM_CHANNELS, NUM_CHANNELS))
@@ -46,14 +50,15 @@ print("---------------")
 print(np.sum(w, axis=0), end="\n\n")
 
 # Credibilities
+print("Calculating credibility scores...", flush=True, end="")
 y = np.ones(NUM_CHANNELS)
-#print("Credibility scores:")
-#print("-------------------", end="\n\n")
-#print("After 0 iterations:", y)
-for i in range(10):
-    y = update(y, w)
-#    print(f"After {i+1} iterations:", y)
-#print("\n\n")
+iterations = 0
+while True:
+    y, converged = update(y, w)
+    iterations += 1
+    if converged:
+        break
+print(f"converged after {iterations} iterations.", end="\n\n")
 
 print("Scores transformed on to LBC grade:")
 print("-----------------------------------")
