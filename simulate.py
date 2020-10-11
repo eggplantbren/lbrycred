@@ -8,13 +8,13 @@ def Phi(x):
     """
     Softening function
     """
-    return (x + 10.0)**0.25
+    return (x + 1)**0.25
 
 def PhiInv(x):
     """
     Inverse
     """
-    return x**4 - 10.0
+    return x**4 - 1.0
 
 
 def update(y, w):
