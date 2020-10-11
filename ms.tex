@@ -32,12 +32,12 @@ elements $w_{ii}$ include the bid, self supports, and anonymous supports.
 In practice the $\boldsymbol{w}$ will be sparse and concentrated along the
 diagonal. The total staked amount on channel $j$ is the column sum
 \begin{align}
-\ell_j = \sum_{i=1}^n w_{ij}.
+\ell_j = \sum_{i=1}^n w_{ij}.\label{eqn:total_lbc}
 \end{align}
 It would be nice if $\boldsymbol{y}$ were in units of LBC and if
 it was normalised to the same total as the staked LBC:
 \begin{align}
-\sum_{i=1}^n \ell_i = \sum_{i=1}^n y_i, \label{eqn:total_lbc}
+\sum_{i=1}^n \ell_i = \sum_{i=1}^n y_i,
 \end{align}
 and what I propose here and demonstrate in {\tt simulate.py} satisfies this
 criterion.
@@ -58,7 +58,7 @@ work in these terms. You can also think about these as numerical PDE solvers
 like in undergrad COSC.
 
 
-\section{Iterative Computation, Taking Supporter Credibility Into Account}
+\section{Taking Supporter Credibility Into Account}
 Now let's try replacing $\ell_j$ with an alternative that accounts for the
 credibilities of the supporting channels. We'll need to treat the diagonal
 value $w_{jj}$ differently because self and anonymous supports don't get
@@ -81,46 +81,17 @@ The inverse of this is
 \Phi^{-1}(x) &= x^4 - 1.
 \end{align}
 
-The convergence process will be performed for the $m$ values, and then,
-once they have converged, used to recompute the $y$-values as follows:
+If the $y$ values are correct, the $m$-values are:
 \begin{align}
-y_j &= w_{jj} + \sum_{i \neq j} m_i w_{ij}.
+m_j &= \Phi(y_j). \label{eqn:grade}
 \end{align}
-If all $m$s were 1, this would be equivalent to Equation~\ref{eqn:total_lbc}.
 
-
-
-%I will also re-grade the credibility scores
-%to be of order unity (but $\geq 1$), so they can be used as LBC multipliers.
-%Let $\eta_j$ be the `effective' staked value on a channel, modified to account
-%for the credibility of the supporters:
-%\begin{align}
-%\eta_j &= w_{jj} + \sum_{i \neq j} y_i w_{ij},
-%\end{align}
-%and let the objective function be
-%\begin{align}
-%f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
-%                            y_i - \Phi\left(w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
-%                        \right]^2
-%\end{align}
-%where $\Phi()$ is a monotonic function mapping LBC units to something of order
-%unity, and also satisfies $\Phi(0) = 1$. Let's try
-%$\Phi(x) = \log_{10}(x + 10)$ and see what happens:
-%\begin{align}
-%f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
-%                            y_i - \log_{10}\left(10 + w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
-%                        \right]^2 \\
-%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i - \Phi(\eta_j)\right)^2 \\
-%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right).
-%\end{align}
-%%Now take the partial derivative with respect to $y_k$:
-%%\begin{align}
-%%\frac{\partial f}{\partial y_k}
-%%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right)
-%%\end{align}
-%A guessed iterative procedure to solve for the $y$s is to set each one to
-%$\Phi(\eta)$ in turn. See {\tt simulate.py} in this repo.
-
+The iterative procedure to compute the $m$s is as follows:
+\begin{enumerate}
+\item Compute $y$s using $y_j = w_{jj} + \sum_{i \neq j} m_i w_{ij}$ ($\equiv$~Eqn~\ref{eqn:total_lbc} if $m$s are 1)
+\item Normalise the $y$s by dividing by their sum and multiplying by total staked LBC
+\item Compute updated $m$s from $y$s using Equation~\ref{eqn:grade}.
+\end{enumerate}
 
 \bibliographystyle{plainnat}
 \bibliography{references}
