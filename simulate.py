@@ -33,13 +33,13 @@ def update(y, w):
 
 # Matrix of supports. Start with diagonal
 w = np.zeros((NUM_CHANNELS, NUM_CHANNELS))
-w += np.diag(np.exp(1.0 + rng.randn(NUM_CHANNELS)))
+w += np.diag(np.exp(3.0 + rng.randn(NUM_CHANNELS)))
 
 # Add a few signed supports (if they land off-diagonal that's what they are)
 for r in range(1 + rng.randint(10)):
     i = rng.randint(NUM_CHANNELS)
     j = rng.randint(NUM_CHANNELS)
-    w[i, j] += np.exp(3.0*rng.randn())
+    w[i, j] += np.exp(3.0 + rng.randn())
 
 print("Support matrix:")
 print("---------------")
