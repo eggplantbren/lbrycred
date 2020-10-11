@@ -30,75 +30,96 @@ a matrix of signed supports, where
 $w_{ij}$ is the support from channel $i$ to channel $j$. Let the diagonal
 elements $w_{ii}$ include the bid, self supports, and anonymous supports.
 In practice the $\boldsymbol{w}$ will be sparse and concentrated along the
-diagonal.
-
-We need to compute the $\boldsymbol{y}$ values from the $\boldsymbol{w}$,
-and Jeremy proposed an iterative procedure which reminds me of the
-\href{https://en.wikipedia.org/wiki/Jacobi_method}{Jacobi Method} or
-Gauss-Seidel. However,
-I tried it out and it diverged --- presumably the matrix $\boldsymbol{w}$ had
-eigenvalues above 1.
-
-One can think of these iterative methods as optimisation techniques; basically
-Gibbs sampling at zero temperature in order to optimise some objective
-function. Since I'm better at optimisation than linear algebra, I will try to work in these terms. You can also think about these as numerical PDE solvers
-like in undergrad COSC.
-
-\section{Total Staked Amount}
-Here I will try to rewrite the rule `credibility $\equiv$~total staked LBC'
-as the solution to an optimisation problem, so I can see how to generalise it.
-The total staked amount on channel $j$ is the column sum
+diagonal. The total staked amount on channel $j$ is the column sum
 \begin{align}
 \ell_j = \sum_{i=1}^n w_{ij}.
 \end{align}
-Define the objective function $f(\boldsymbol{y})$ as
+It would be nice if $\boldsymbol{y}$ were in units of LBC and if
+it was normalised to the same total as the staked LBC:
 \begin{align}
-f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n y_j^2.
+\sum_{i=1}^n \ell_i = \sum_{i=1}^n y_i, \label{eqn:total_lbc}
 \end{align}
-That's maximised by setting all elements of $\boldsymbol{y}$ to zero.
-Now add another term:
-\begin{align}
-f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{j=1}^n
-                            \left(y_j - \ell_j\right)^2.
-\end{align}
-This just moves the peak so the maximum is trivially found at
-$y_j = \ell_j$. Bear in mind that the credibility score here is in LBC
-units, which might not be desirable.
+and what I propose here and demonstrate in {\tt simulate.py} satisfies this
+criterion.
 
-\section{Taking Supporter Credibility Into Account}
+We need to compute the $\boldsymbol{y}$ values from the $\boldsymbol{w}$,
+and Jeremy (or someone else at LBRY Inc) proposed an iterative procedure which
+reminds me of the
+\href{https://en.wikipedia.org/wiki/Jacobi_method}{Jacobi Method} or
+(more accurately) Gauss-Seidel. However,
+I tried it out and it diverged --- presumably the matrix $\boldsymbol{w}$ had
+eigenvalues above 1.
+
+{\bf Aside mostly for my own thinking}:
+One can think of these iterative methods as optimisation techniques; basically
+Gibbs sampling at zero temperature in order to optimise some objective
+function. Since I'm better at optimisation than linear algebra, I will try to
+work in these terms. You can also think about these as numerical PDE solvers
+like in undergrad COSC.
+
+
+\section{Iterative Computation, Taking Supporter Credibility Into Account}
 Now let's try replacing $\ell_j$ with an alternative that accounts for the
 credibilities of the supporting channels. We'll need to treat the diagonal
 value $w_{jj}$ differently because self and anonymous supports don't get
-modified due to credibility. I will also re-grade the credibility scores
-to be of order unity (but $\geq 1$), so they can be used as LBC multipliers.
-Let $\eta_j$ be the `effective' staked value on a channel, modified to account
-for the credibility of the supporters:
+modified due to credibility.
+
+To do this, I will introduce another quantity for each channel,
+$\boldsymbol{m} = \{m_1, m_2, ..., m_n\}$. The {\em m} stands for
+{\em multiplier}, as the effect of these is going to be multiplication of LBC
+(so if a channel has $m=2$, their staked LBC is twice as valuable as someone
+with $m=1$). All $m$ values are greater than or equal to 1.
+Before continuing, let's define a nonlinear softening function which takes
+an LBC amount as input and returns a multiplier value. Similar to trending,
+I will use the fourth root, with a modification so that the initial value
+is 1:
 \begin{align}
-\eta_j &= w_{jj} + \sum_{i \neq j} y_i w_{ij},
+\Phi(x) &= (x + 1)^{1/4}.
 \end{align}
-and let the objective function be
+The inverse of this is
 \begin{align}
-f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
-                            y_i - \Phi\left(w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
-                        \right]^2
+\Phi^{-1}(x) &= x^4 - 1.
 \end{align}
-where $\Phi()$ is a monotonic function mapping LBC units to something of order
-unity, and also satisfies $\Phi(0) = 1$. Let's try
-$\Phi(x) = \log_{10}(x + 10)$ and see what happens:
+
+The convergence process will be performed for the $m$ values, and then,
+once they have converged, used to recompute the $y$-values as follows:
 \begin{align}
-f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
-                            y_i - \log_{10}\left(10 + w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
-                        \right]^2 \\
-    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i - \Phi(\eta_j)\right)^2 \\
-    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right).
+y_j &= w_{jj} + \sum_{i \neq j} m_i w_{ij}.
 \end{align}
-%Now take the partial derivative with respect to $y_k$:
+If all $m$s were 1, this would be equivalent to Equation~\ref{eqn:total_lbc}.
+
+
+
+%I will also re-grade the credibility scores
+%to be of order unity (but $\geq 1$), so they can be used as LBC multipliers.
+%Let $\eta_j$ be the `effective' staked value on a channel, modified to account
+%for the credibility of the supporters:
 %\begin{align}
-%\frac{\partial f}{\partial y_k}
-%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right)
+%\eta_j &= w_{jj} + \sum_{i \neq j} y_i w_{ij},
 %\end{align}
-A guessed iterative procedure to solve for the $y$s is to set each one to
-$\Phi(\eta)$ in turn. See {\tt simulate.py} in this repo.
+%and let the objective function be
+%\begin{align}
+%f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
+%                            y_i - \Phi\left(w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
+%                        \right]^2
+%\end{align}
+%where $\Phi()$ is a monotonic function mapping LBC units to something of order
+%unity, and also satisfies $\Phi(0) = 1$. Let's try
+%$\Phi(x) = \log_{10}(x + 10)$ and see what happens:
+%\begin{align}
+%f(\boldsymbol{y}) &= -\frac{1}{2}\sum_{i=1}^n \left[
+%                            y_i - \log_{10}\left(10 + w_{jj} + \sum_{i \neq j} y_i w_{ij}\right)
+%                        \right]^2 \\
+%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i - \Phi(\eta_j)\right)^2 \\
+%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right).
+%\end{align}
+%%Now take the partial derivative with respect to $y_k$:
+%%\begin{align}
+%%\frac{\partial f}{\partial y_k}
+%%    &= -\frac{1}{2}\sum_{i=1}^n\left(y_i^2 - 2y_i\Phi(\eta_j) + \Phi(\eta_j)^2\right)
+%%\end{align}
+%A guessed iterative procedure to solve for the $y$s is to set each one to
+%$\Phi(\eta)$ in turn. See {\tt simulate.py} in this repo.
 
 
 \bibliographystyle{plainnat}
