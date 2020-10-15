@@ -86,12 +86,18 @@ If the $y$ values are correct, the $m$-values are:
 m_j &= \Phi(y_j). \label{eqn:grade}
 \end{align}
 
-The iterative procedure to compute the $m$s is as follows:
+The iterative procedure to compute the $m$s and thus the $y$s is as follows,
+starting from an initial estimate of the $y$s which should probably be set
+equal to the $\ell$s (the total staked LBC).
 \begin{enumerate}
-\item Compute $y$s using $y_j = w_{jj} + \sum_{i \neq j} m_i w_{ij}$ ($\equiv$~Eqn~\ref{eqn:total_lbc} if $m$s are 1)
-\item Normalise the $y$s by dividing by their sum and multiplying by total staked LBC
-\item Compute updated $m$s from $y$s using Equation~\ref{eqn:grade}.
+\item Compute the $m$s from the $y$s using Equation~\ref{eqn:grade}.
+\item Update the $y$s using $y_j = w_{jj} + \sum_{i \neq j} m_i w_{ij}$
+($\equiv$~Eqn~\ref{eqn:total_lbc} if $m$s are 1)
+\item Re-normalise the $y$s by dividing by their sum and multiplying by total
+staked LBC
 \end{enumerate}
+This process is repeated until the change in the $y$s is neligible. Typically
+not many iterations are needed.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
